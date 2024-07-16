@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.App {
+    text-align: center;
+  }
+
+body{
+  background-image: url('/public/d4e3256875f17cf825cf60799604caf4.jpg');
+  background-size: cover;
+  overflow: hidden;
+}
