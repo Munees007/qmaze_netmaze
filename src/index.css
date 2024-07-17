@@ -1,12 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+CU:wght@100..400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+CU:wght@100..400&family=Shadows+Into+Light&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 .App {
     text-align: center;
-  }
+}
 
 body{
-  background-image: url('/public/d4e3256875f17cf825cf60799604caf4.jpg');
-  background-size: cover;
+  margin: 0;
   overflow: hidden;
+}
+/* Add this to your CSS file */
+.bg-image-0 {
+  background-image: url('/image1.jpg');
+  background-size: cover;
+}
+
+.bg-image-1 {
+  background-image: url('/image2.jpg');
+  background-size: cover;
+}
+
+.bg-image-2 {
+  background-image: url('/image3.jpg');
+  background-size: cover;
+}
+
+.bg-image-3 {
+  background-image: url('/image4.jpg');
+  background-size: cover;
+}
+
+.bg-image-4 {
+  background-image: url('/image5.jpg');
+  background-size: cover;
+}
+
+.wordGamebg{
+  background-image: url('/public/bg3.jpg');
+  background-size: cover;
+}
+
+.test{
+  background-image: url('/public/bg.png');
+  background-size: cover;
+}
+
+.btnBG{
+  background-image: url('/public/bgbtn1.png');
+  background-size: cover;
+}
+
+@font-face{
+  font-family: 'Harry Potter';
+  src: url('/src/fonts/MagicSchoolOne-ovYz.ttf') format('truetype');
+}
+
+.harry-potter-font{
+  font-family: 'Harry Potter',sans-serif;
+
 }
