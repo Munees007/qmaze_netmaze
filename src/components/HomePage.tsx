@@ -1,12 +1,10 @@
 
-import ReactConfetti from "react-confetti";
-import ThemeToggle from "./ThemeToggle";
+
 import { Snowfall } from "react-snowfall";
 import { useEffect, useState } from "react";
-import { useTheme } from "./ToggleContext";
+
 import { useNavigate } from "react-router-dom";
 const HomePage = () =>{
-    const {isDarkMode} = useTheme();
     const [currentImg,setCurrentImg] = useState<string>("w2");
     const backGround = ["w1","w2","w3"];
     const navigate = useNavigate();

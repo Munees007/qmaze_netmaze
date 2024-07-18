@@ -13,7 +13,7 @@ interface FoundWord {
 }
 
 const WordSearch: React.FC = () => {
-  const words = ["JAVA", "PYTHON", "CPLUSPLUS", "BCA", "HTML", "CSS", "SQL"];
+  const words = ["JAVA", "BCA", "HTML", "CSS", "SQL"];
   const colors = ["green", "pink", "blue", "orange", "yellow"];
   const [selectedLetters, setSelectedLetters] = useState<string>('');
   const [isSelecting, setIsSelecting] = useState<boolean>(false);
@@ -42,7 +42,7 @@ const WordSearch: React.FC = () => {
   };
 
   useEffect(() => {
-    if (timeLeft === 0) {
+    if (timeLeft === 0 || gameOver) {
       setGameOver(true);
       return;
     }
@@ -52,7 +52,7 @@ const WordSearch: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [timeLeft, gameOver]);
 
   useEffect(() => {
     localStorage.setItem('timeLeft', JSON.stringify(timeLeft)); // Store remaining time
@@ -67,6 +67,9 @@ const WordSearch: React.FC = () => {
         setScore(score + 1);
         localStorage.setItem('foundWords', JSON.stringify(newFoundWords));
         localStorage.setItem('score', JSON.stringify(score + 1));
+        if (newFoundWords.length === words.length) {
+          setGameOver(true);
+        }
       } else {
         setSelectedPath([]);
       }

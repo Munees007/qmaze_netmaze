@@ -1,6 +1,5 @@
 import React from "react";
 import WordSearch from "./components/wordSeacrch";
-import ThemeToggle from "./components/ThemeToggle";
 import HomePage from "./components/HomePage";
 import {BrowserRouter,Routes,Route} from 'react-router-dom'
 import { ThemeProvider } from "./components/ToggleContext";
