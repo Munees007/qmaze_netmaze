@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { getFlagData } from "./storeData";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/ReactToastify.min.css';
-import Confetti from "react-confetti/dist/types/Confetti";
-import { BiLeftArrow, BiSolidLeftArrow, BiSolidRightArrow } from "react-icons/bi";
+
+import {BiSolidLeftArrow, BiSolidRightArrow } from "react-icons/bi";
 
 const HomePage = () => {
     const [currentImg, setCurrentImg] = useState<string>("w2");

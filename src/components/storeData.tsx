@@ -1,4 +1,4 @@
-import { ref, set, get ,update, query, orderByChild} from "firebase/database";
+import { ref, set, get ,update} from "firebase/database";
 import { db } from "../firebase"; // Adjust the import path based on your project structure
 
 interface FormData {
@@ -89,7 +89,7 @@ const setFlagData = async (val:boolean)=>{
   try {
       const userRef = ref(db,'flag');
 
-      const usersSnapshot = await set(userRef,val);
+      await set(userRef,val);
 
       console.log("timer started successfully");
   } catch (error) {

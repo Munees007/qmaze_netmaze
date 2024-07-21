@@ -5,8 +5,8 @@ import { Snowfall } from 'react-snowfall';
 import {submitFormData,updateGameData} from './storeData';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css'
-import { useNavigate, useNavigation } from 'react-router-dom';
-import Particles from 'react-particles';
+import { useNavigate} from 'react-router-dom';
+
 
 
 
@@ -86,7 +86,7 @@ const WordSearch: React.FC = () => {
     return storedScore ? JSON.parse(storedScore) : 0;
   });
 
-  const [selectedGrid,setSelecetedGrid] = useState<number>(()=>{
+  const [selectedGrid] = useState<number>(()=>{
     const gridNum = localStorage.getItem('gridNum');
     let index;
     if(gridNum)
