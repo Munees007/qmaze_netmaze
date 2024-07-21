@@ -68,7 +68,7 @@ const HomePage = () => {
         )}
         {backGround.indexOf(currentImg) === 2 && (
           <div className="absolute inset-0  flex items-center justify-center">
-            <video src="/demo.mp4" autoPlay={true} controls className="w-[50rem] border-4 border-pink-700 shadow-md shadow-pink-600 rounded-md">
+            <video src="/demo1.mp4" autoPlay={true} controls className="w-[50rem] border-4 border-pink-700 shadow-md shadow-pink-600 rounded-md">
               <source src="/demo1.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
