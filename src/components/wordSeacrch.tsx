@@ -149,6 +149,10 @@ const WordSearch: React.FC = () => {
     {
         toast.warn('only 10 seconds left')
     }
+    else if(timeLeft == 600)
+    {
+      toast.warn('only 10 minutes left')
+    }
 
     return () => clearInterval(timer);
   }, [timeLeft, gameOver, showForm, timerStarted]);
