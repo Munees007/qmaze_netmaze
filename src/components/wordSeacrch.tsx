@@ -30,39 +30,31 @@ interface GameData  {
 
 const WordSearch: React.FC = () => {
   const words = [[
-    // Left to Right
     'SYSTEM', 'RAM', 'DATABASE', 'DOS', 'ZIP', 'CSS',
-    // Right to Left
-    'HARDWARE',
-    // Top to Bottom
-    'PROCESSOR', 'BYTE', 'HEAP',
-    // Bottom to Top
+    'HARDWARE','PROCESSOR', 'BYTE', 'HEAP',
     'BIT', 'MEMORY', 'MOUSE', 'HTML',
-    // Diagonal
     'SQL', 'PYTHON', 'OS', 'JAVA', 'CUT', 'FILE'
   ],
   [
-   "BUG", "BACKUP", "WIFI", "BIAS", "DISK",      // Left to Right
-"PORT",                                       // Right to Left
-"ARRAY", "CLIENT", "BOOT", "PIXEL", "INTERNET", "SERVER",  // Top to Bottom
-"SSL", "BROWSER", "DOMAIN", "CODE",           // Bottom to Top
-"PHP", "GPU", "CHAR", "BINARY"                // Diagonal
-         // Diagonal
+   "BUG", "BACKUP", "WIFI", "BIAS", "DISK",    
+"PORT",                                       
+"ARRAY", "CLIENT", "BOOT", "PIXEL", "INTERNET", "SERVER", 
+"SSL", "BROWSER", "DOMAIN", "CODE",           
+"PHP", "GPU", "CHAR", "BINARY"               
   ],
   [
     "DIRECTORY", "XML",
   
-    // Right to Left
+   
     "GOOGLE", "DOWNLOAD", "VIRUS", "PNG", "ITERATION",
     
-    // Top to Bottom
+    
     "UNIX", "HDMI", "EMAIL", "DATA", "IOS",
     
-    // Bottom to Top
+   
     "TREE", "BUS",
     
-    // Full Uppercase
-    "KEYBOARD", "EXE", "GIT", "GPS", "CLASS", "GUI" // Diagonal
+    "KEYBOARD", "EXE", "GIT", "GPS", "CLASS", "GUI" 
   ]
   
   
@@ -102,7 +94,7 @@ const WordSearch: React.FC = () => {
   })
   const [timeLeft, setTimeLeft] = useState<number>(() => {
     const storedTime = localStorage.getItem('timeLeft');
-    return storedTime ? JSON.parse(storedTime) : 1500; // Default to 300 seconds (5 minutes)
+    return storedTime ? JSON.parse(storedTime) : 1200; // Default to 300 seconds (5 minutes)
   });
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [showForm, setShowForm] = useState<boolean>(() => {
