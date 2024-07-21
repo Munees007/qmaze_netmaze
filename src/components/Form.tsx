@@ -32,12 +32,12 @@ const Form: React.FC<Props> = ({ onSubmit }) => {
     //   if (response.data.success) {
         onSubmit(formData);
     //     // Clear form data after submission
-    //     setFormData({
-    //       name: '',
-    //       rollNumber: '',
-    //       className: '',
-    //       email: '',
-    //     });
+        setFormData({
+          name: '',
+          rollNumber: '',
+          className: '',
+          email: '',
+        });
     //   } else {
     //     console.error(response.data.message);
     //   }
@@ -49,8 +49,8 @@ const Form: React.FC<Props> = ({ onSubmit }) => {
 
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-gray-700 bg-opacity-50 z-50">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4">User Details</h2>
+      <form onSubmit={handleSubmit} className="bg-white flex flex-col w-[40rem] p-8 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-semibold mb-4">Player Details</h2>
         <div className="mb-4">
           <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
             Name
@@ -61,7 +61,7 @@ const Form: React.FC<Props> = ({ onSubmit }) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="block w-full border-gray-300 rounded-lg px-4 py-2"
+            className="block w-full border-gray-300 rounded-lg px-4 py-2 border-2"
             required
           />
         </div>
@@ -75,7 +75,7 @@ const Form: React.FC<Props> = ({ onSubmit }) => {
             name="rollNumber"
             value={formData.rollNumber}
             onChange={handleChange}
-            className="block w-full border-gray-300 rounded-lg px-4 py-2"
+            className="block w-full border-gray-300 rounded-lg border-2 px-4 py-2"
             required
           />
         </div>
@@ -89,7 +89,7 @@ const Form: React.FC<Props> = ({ onSubmit }) => {
             name="className"
             value={formData.className}
             onChange={handleChange}
-            className="block w-full border-gray-300 rounded-lg px-4 py-2"
+            className="block w-full border-gray-300 rounded-lg border-2 px-4 py-2"
             required
           />
         </div>
@@ -103,7 +103,7 @@ const Form: React.FC<Props> = ({ onSubmit }) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="block w-full border-gray-300 rounded-lg px-4 py-2"
+            className="block w-full border-gray-300 rounded-lg border-2 px-4 py-2"
             required
           />
         </div>

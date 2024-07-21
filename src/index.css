@@ -39,7 +39,7 @@ body{
 }
 
 .wordGamebg{
-  background-image: url('/public/bg3.jpg');
+  background-image: url('/public/bg9.jpg');
   background-size: cover;
 }
 
@@ -61,4 +61,13 @@ body{
 .harry-potter-font{
   font-family: 'Harry Potter',sans-serif;
 
+}
+
+@keyframes scale{
+  to{
+      transform: scale(0.8);
+  }
+  from{
+      transform: scale(1);
+  }
 }
