@@ -63,7 +63,7 @@ const UserDataComponent: React.FC = () => {
     fetchData("all");
   }, [dataFetched,flag]);
 
-  if (!dataFetched) {
+  if (!userList) {
     return <p>Loading...</p>;
   }
 
