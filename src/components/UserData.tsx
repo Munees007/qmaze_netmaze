@@ -55,8 +55,8 @@ const UserDataComponent: React.FC = () => {
     fetchData(selectedValue);
   };
   const handleTimerStart = async () =>{
-    await setFlagData(true);
-    setFlag(true);
+    await setFlagData(!flag);
+    setFlag(!flag);
   }
 
   useEffect(() => {
@@ -79,10 +79,7 @@ const UserDataComponent: React.FC = () => {
         All USER DETAILS
       </h2>
       <p className="text-white">Time Started : {flag ? "true" : "false"}</p>
-      {
-        flag ? <></>:
-        <button onClick={handleTimerStart} className="bg-teal-400 px-4 py-1 rounded-md border-2 font-playfair font-bold">Start</button>
-      }
+        <button onClick={handleTimerStart} className="bg-teal-400 px-4 py-1 rounded-md border-2 font-playfair font-bold">{flag ? "off" : "on"}</button>
       <div className="absolute right-5">
         <select onChange={handleSelectChange} className="bg-teal-400 border-2 border-white rounded-md shadow-md hover:bg-teal-300 shadow-black">
           <option value="all">Overall</option>

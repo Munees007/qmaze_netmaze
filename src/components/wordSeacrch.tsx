@@ -63,7 +63,7 @@ const WordSearch: React.FC = () => {
   const colors = ["#dc0073", "#ff7700", "#005ae0"];
   const [chanceCount, setChanceCount] = useState<number>(() => {
     const chance = localStorage.getItem('chance');
-    return chance ? parseInt(chance) : 25;
+    return chance ? parseInt(chance) : 30;
   });
   const [selectedLetters, setSelectedLetters] = useState<string>('');
   const [isSelecting, setIsSelecting] = useState<boolean>(false);
@@ -145,12 +145,21 @@ const WordSearch: React.FC = () => {
       setTimeLeft(prevTime => prevTime - 1);
     }, 1000);
 
+    if(timeLeft == 10)
+    {
+        toast.warn('only 10 seconds left')
+    }
+
     return () => clearInterval(timer);
   }, [timeLeft, gameOver, showForm, timerStarted]);
 
   useEffect(() => {
     if (chanceCount === 0) {
       setGameOver(true);
+    }
+    if(chanceCount === 5)
+    {
+      toast.warn('only 5 chances left')
     }
   }, [chanceCount]);
 

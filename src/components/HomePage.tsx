@@ -39,24 +39,24 @@ const HomePage = () => {
         />
         {backGround.indexOf(currentImg) === 0 && (
           <div className="absolute text-xl font-bold inset-0 flex items-center justify-center">
-            <div className="bg-gray-100 p-6 rounded-lg shadow-lg max-w-2xl w-full text-center">
-              <p className="text-lg font-semibold mb-4">
+            <div className="bg-gray-100 font-playfair p-6 rounded-lg shadow-lg max-w-2xl w-full text-center">
+              <p className="text-2xl  mb-4">
                 This word search game was created by Munees and organized by the
                 III BCA B students.
               </p>
-              <p className="text-lg font-semibold mb-4">
-                We would like to extend our special thanks to our seniors and
-                the faculty members for their invaluable support and guidance.
+              <p className="text-xl font-semibold mb-4">
+                We would like to extend our special thanks to our <b>seniors</b> and
+                the <b>faculty members</b> for their invaluable support and guidance.
               </p>
-              <p className="text-lg font-semibold mb-4">
-                A heartfelt thank you to our Head of Department for approving
+              <p className="text-xl font-semibold mb-4">
+                A heartfelt thank you to our <b>Head of Department </b>for approving
                 and encouraging this event.
               </p>
-              <p className="text-lg font-semibold mb-4">
-                We appreciate your participation and enthusiasm. We hope to see
+              <p className="text-xl font-semibold mb-4">
+                We appreciate your <b>participation</b> and enthusiasm. We hope to see
                 you in future events!
               </p>
-              <p className="text-lg font-semibold">
+              <p className="text-xl font-semibold">
                 Best regards,
                 <br />
                 R. Karthik Balan <br />
@@ -69,7 +69,7 @@ const HomePage = () => {
         {backGround.indexOf(currentImg) === 2 && (
           <div className="absolute inset-0  flex items-center justify-center">
             <video src="/demo.mp4" autoPlay={true} controls className="w-[50rem] border-4 border-pink-700 shadow-md shadow-pink-600 rounded-md">
-              <source src="/demo.mp4" type="video/mp4" />
+              <source src="/demo1.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
