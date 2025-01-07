@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Form from './Form'; // Adjust the path as per your project structure
 import { RiTimerFlashLine } from "react-icons/ri";
 import { Snowfall } from 'react-snowfall';
-import {submitFormData,updateGameData} from './storeData';
+import {updateGameData} from './storeData';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css'
 import { useNavigate} from 'react-router-dom';
@@ -97,10 +96,6 @@ const WordSearch: React.FC = () => {
     return storedTime ? JSON.parse(storedTime) : 1200; // Default to 300 seconds (5 minutes)
   });
   const [gameOver, setGameOver] = useState<boolean>(false);
-  const [showForm, setShowForm] = useState<boolean>(() => {
-    const formSubmitted = localStorage.getItem('formSubmitted');
-    return formSubmitted ? false : true; // Show form if 'formSubmitted' is not set
-  });
   const [timerStarted, setTimerStarted] = useState<boolean>(false); // Flag to track if timer has started
 
   const getRandomColor = () => {
@@ -127,14 +122,6 @@ const WordSearch: React.FC = () => {
   };
 
   useEffect(() => {
-    if (showForm) {
-      return; // Don't start timer until form is submitted
-    }
-
-    if (!timerStarted && !showForm) {
-      setTimerStarted(true); // Set flag once timer starts after form submission
-    }
-
     if (timeLeft === 0 || gameOver) {
       setGameOver(true);
       handleGameOver();
@@ -155,7 +142,7 @@ const WordSearch: React.FC = () => {
     }
 
     return () => clearInterval(timer);
-  }, [timeLeft, gameOver, showForm, timerStarted]);
+  }, [timeLeft, gameOver, timerStarted]);
 
   useEffect(() => {
     if (chanceCount === 0) {
@@ -320,33 +307,6 @@ const WordSearch: React.FC = () => {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  const handleFormSubmit = async (formData:any) => {
-    localStorage.setItem('formSubmitted', 'true');
-    try {
-      const gameData:GameData = {
-        wordsFound:foundWords,
-        score:score,
-        chanceleft:chanceCount,
-        time : timeLeft
-      }
-      const res = await submitFormData(formData,gameData);
-      if(res !== 'Duplicate')
-      {
-          toast.success("Thank you for the Details!")
-          setShowForm(false);
-      }
-      else
-      {
-          toast.error("User Already Exists")
-          setShowForm(false)
-      }
-      
-    } catch (error) {
-        console.log(error)
-    }
-    
-  };
-
   const handleExit = () =>{
      navigate('/end');
   }
@@ -392,7 +352,6 @@ const WordSearch: React.FC = () => {
         <RiTimerFlashLine size={40} className='' />
         <p className='text-2xl font-playfair'>{formatTime(timeLeft)}</p>
       </div>
-      {showForm && <Form onSubmit={handleFormSubmit} />}
       <ToastContainer position='top-right'/>
     </div>
   );

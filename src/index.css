@@ -39,17 +39,17 @@ body{
 }
 
 .wordGamebg{
-  background-image: url('/public/bg9.jpg');
+  background-image: url('/bg9.jpg');
   background-size: cover;
 }
 
 .test{
-  background-image: url('/public/bg.png');
+  background-image: url('/bg.png');
   background-size: cover;
 }
 
 .btnBG{
-  background-image: url('/public/bgbtn1.png');
+  background-image: url('/bgbtn1.png');
   background-size: cover;
 }
 

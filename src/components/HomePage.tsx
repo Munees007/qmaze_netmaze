@@ -1,16 +1,22 @@
 import { Snowfall } from "react-snowfall";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFlagData } from "./storeData";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/ReactToastify.min.css';
 
 import {BiSolidLeftArrow, BiSolidRightArrow } from "react-icons/bi";
+import Form from "./Form";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { isNetmazeParticipant } from "../backend/netmazeLogin";
+import { fetchParticipantData } from "../backend/fetchData";
+import { auth } from "../firebase";
 
 const HomePage = () => {
     const [currentImg, setCurrentImg] = useState<string>("w2");
     const backGround = ["w1", "w2", "w3"];
     const navigate = useNavigate();
+    const [isLogined,setIsLogined] = useState<boolean>(false);
 
     const handleImageChange = (direction: "next" | "prev") => {
         const currentIndex = backGround.indexOf(currentImg);
@@ -28,6 +34,29 @@ const HomePage = () => {
             toast.info("Kindly wait for some more minutes to get started");
         }
     };
+    const handleGoogleSignIn = async ()=>{
+      try {
+        const auth = getAuth();
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        await isNetmazeParticipant(result?.user?.email!);
+      } catch (error) {
+        toast.error("Failed to sign in with Google");
+      }
+    }
+
+    useEffect(()=>{
+      const fetchData = async () =>{
+        const participantData = await fetchParticipantData(auth.currentUser?.email!);
+        if(participantData)
+          setIsLogined(participantData.isLogin);
+      }
+
+      fetchData();
+      
+    },[])
+
+    return ( !isLogined && <Form onGoogleSignIn={handleGoogleSignIn}/>)
 
     return (
       <div className="font-shadow h-screen w-full overflow-hidden flex relative">
