@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RiTimerFlashLine } from "react-icons/ri";
 import { Snowfall } from 'react-snowfall';
-import {updateGameData} from './storeData';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css'
 import { useNavigate} from 'react-router-dom';
@@ -20,12 +18,12 @@ interface FoundWord {
   color: string;
 }
 
-interface GameData  {
-  wordsFound: FoundWord[],
-  score:number,
-  chanceleft:number,
-  time : number
-}
+// interface GameData  {
+//   wordsFound: FoundWord[],
+//   score:number,
+//   chanceleft:number,
+//   time : number
+// }
 
 const WordSearch: React.FC = () => {
   const words = [[
@@ -91,58 +89,16 @@ const WordSearch: React.FC = () => {
     }
     return index;
   })
-  const [timeLeft, setTimeLeft] = useState<number>(() => {
-    const storedTime = localStorage.getItem('timeLeft');
-    return storedTime ? JSON.parse(storedTime) : 1200; // Default to 300 seconds (5 minutes)
-  });
+  
   const [gameOver, setGameOver] = useState<boolean>(false);
-  const [timerStarted, setTimerStarted] = useState<boolean>(false); // Flag to track if timer has started
 
   const getRandomColor = () => {
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
-  const handleGameOver = async () => {
-    const gameData: any = {
-      wordsFound: foundWords,
-      score: score,
-      chanceleft: chanceCount,
-      time: timeLeft,
-      gridNum:selectedGrid
-    };
-    const userData = localStorage.getItem('userData');
-    const data = JSON.parse(userData!);
-    const rollNumber = data.rollNumber; // Ensure you have formData available here
-    try {
-      await updateGameData(rollNumber, gameData);
-      console.log('Game data updated on game over.');
-    } catch (error) {
-      console.error('Error updating game data:', error);
-    }
-  };
 
-  useEffect(() => {
-    if (timeLeft === 0 || gameOver) {
-      setGameOver(true);
-      handleGameOver();
-      return;
-    }
 
-    const timer = setInterval(() => {
-      setTimeLeft(prevTime => prevTime - 1);
-    }, 1000);
-
-    if(timeLeft == 10)
-    {
-        toast.warn('only 10 seconds left')
-    }
-    else if(timeLeft == 600)
-    {
-      toast.warn('only 10 minutes left')
-    }
-
-    return () => clearInterval(timer);
-  }, [timeLeft, gameOver, timerStarted]);
+  
 
   useEffect(() => {
     if (chanceCount === 0) {
@@ -166,10 +122,7 @@ const WordSearch: React.FC = () => {
       }
   },[])
 
-  useEffect(() => {
-    localStorage.setItem('timeLeft', JSON.stringify(timeLeft)); // Store remaining time
-    localStorage.setItem('chance', chanceCount.toString()); // Store chance count
-  }, [timeLeft, chanceCount]);
+  
 
   useEffect(() => {
     const handleMouseUp = () => {
@@ -301,25 +254,21 @@ const WordSearch: React.FC = () => {
   ]
 ];
 
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  };
-
-  const handleExit = () =>{
-     navigate('/end');
-  }
 
   return (
     <div className={`wordGamebg h-screen flex justify-center items-center w-full`}>
       <Snowfall />
-      <div className='w-full flex justify-center gap-2 items-center h-[32rem]'>
+      <div className='w-full max-md:flex-col max-sm:flex-col flex justify-center gap-2 items-center h-[32rem]'>
+        <div className='max-md:flex max-sm:flex border-teal-500 shadow-lg shadow-white/30 rounded-lg border-2 bg-black/60 hidden items-center flex-col justify-between w-fit px-10 text-2xl font-playfair text-white'>
+          <p className=''>Chance Left : {chanceCount}</p>
+          <p className=''>Selected Letters: {selectedLetters}</p>
+          <p className=''>Score: {score}</p>
+        </div>
         <div className='grid grid-cols-10 gap-1 w-fit p-3 bg-black/60 border-2 h-full border-teal-500 rounded-lg shadow-lg shadow-white/30'>
           {grid[selectedGrid].map((letter, index) => (
             <div
-              key={index}
-              className={`select-none flex justify-center items-center shadow-lg shadow-teal-700 w-10 h-10 border-2 border-black rounded-lg cursor-pointer ${
+              key={index} 
+              className={`select-none flex justify-center items-center shadow-lg shadow-teal-700 max-sm:w-8 max-sm:h-8 max-md:w-8 max-md:h-8 w-10 h-10 border-2 border-black rounded-lg cursor-pointer ${
                 isCellSelected(index) && isSelecting ? 'bg-gray-500' : 'bg-teal-700'
               }`}
               onClick={() => handleMouseDown(letter, index)}
@@ -330,14 +279,14 @@ const WordSearch: React.FC = () => {
             </div>
           ))}
         </div>
-        <div className='flex flex-col border-2 h-full overflow-auto border-teal-500 shadow-lg shadow-white/30 rounded-lg w-72 p-5 bg-black/60 text-white font-playfair text-xl'>
-          <div className='flex flex-col items-center'>
+        <div className='flex flex-col border-2 h-full overflow-auto max-sm:hidden max-md:hidden  border-teal-500 shadow-lg shadow-white/30 rounded-lg w-72 p-5 bg-black/60 text-white font-playfair text-xl'>
+          <div className='flex flex-col  items-center'>
             <p className=''>Chance Left : {chanceCount}</p>
             <p className=''>Selected Letters: {selectedLetters}</p>
             <p className='mt-4'>Score: {score}</p>
           </div>
           <div className='flex flex-col items-center'>
-            <h3 className='mt-4'>Found Words:</h3>
+            <h3 className='mt-4 max-sm:mt-0 max-md:mt-0'>Found Words:</h3>
             <ul className='mt-4'>
               {foundWords.map((foundWord, index) => (
                 <li key={index} style={{  }}>{foundWord.word}</li>
@@ -345,12 +294,6 @@ const WordSearch: React.FC = () => {
             </ul>
           </div>
         </div>
-      </div>
-
-      <div className="fixed flex flex-col items-center bottom-4 right-20 text-white py-2 px-4 rounded">
-        { gameOver ?<button className='mb-10 bg-black/80 px-4 py-1 rounded-md border-2 border-white' onClick={handleExit}>Exit</button> : <></>}
-        <RiTimerFlashLine size={40} className='' />
-        <p className='text-2xl font-playfair'>{formatTime(timeLeft)}</p>
       </div>
       <ToastContainer position='top-right'/>
     </div>
