@@ -20,10 +20,10 @@ export const fetchParticipantData = async (email:string) =>{
     }
 }
 
-export const fetchQuestions = async (event:number) =>{
-    try {
+// export const fetchQuestions = async (event:number) =>{
+//     try {
         
-    } catch (error) {
+//     } catch (error) {
         
-    }
-}
+//     }
+// }
