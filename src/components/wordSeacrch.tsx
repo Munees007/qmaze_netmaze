@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Snowfall } from 'react-snowfall';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css'
-import { useNavigate} from 'react-router-dom';
 
 
 
@@ -56,7 +55,6 @@ const WordSearch: React.FC = () => {
   
   
 ];
-  const navigate = useNavigate();
   const colors = ["#dc0073", "#ff7700", "#005ae0"];
   const [chanceCount, setChanceCount] = useState<number>(() => {
     const chance = localStorage.getItem('chance');
@@ -96,10 +94,6 @@ const WordSearch: React.FC = () => {
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
-
-
-  
-
   useEffect(() => {
     if (chanceCount === 0) {
       setGameOver(true);
@@ -109,21 +103,6 @@ const WordSearch: React.FC = () => {
       toast.warn('only 5 chances left')
     }
   }, [chanceCount]);
-
-  useEffect(()=>{
-      const flag = localStorage.getItem('timeFlag');
-      if(flag)
-      {
-
-      }
-      else
-      {
-          navigate('/');
-      }
-  },[])
-
-  
-
   useEffect(() => {
     const handleMouseUp = () => {
       if (words[selectedGrid].includes(selectedLetters) && !foundWords.some(word => word.word === selectedLetters)) {
