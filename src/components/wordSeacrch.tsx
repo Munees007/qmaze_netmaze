@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Snowfall } from 'react-snowfall';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css'
+import { useLocation, useNavigate} from 'react-router-dom';
+import { fecthQuestions } from '../backend/fetchData';
+import { updateCurrentIndex, updateScore } from '../backend/updateData';
 
 
 
@@ -25,124 +28,108 @@ interface FoundWord {
 // }
 
 const WordSearch: React.FC = () => {
-  const words = [[
-    'SYSTEM', 'RAM', 'DATABASE', 'DOS', 'ZIP', 'CSS',
-    'HARDWARE','PROCESSOR', 'BYTE', 'HEAP',
-    'BIT', 'MEMORY', 'MOUSE', 'HTML',
-    'SQL', 'PYTHON', 'OS', 'JAVA', 'CUT', 'FILE'
-  ],
-  [
-   "BUG", "BACKUP", "WIFI", "BIAS", "DISK",    
-"PORT",                                       
-"ARRAY", "CLIENT", "BOOT", "PIXEL", "INTERNET", "SERVER", 
-"SSL", "BROWSER", "DOMAIN", "CODE",           
-"PHP", "GPU", "CHAR", "BINARY"               
-  ],
-  [
-    "DIRECTORY", "XML",
-  
-   
-    "GOOGLE", "DOWNLOAD", "VIRUS", "PNG", "ITERATION",
-    
-    
-    "UNIX", "HDMI", "EMAIL", "DATA", "IOS",
-    
-   
-    "TREE", "BUS",
-    
-    "KEYBOARD", "EXE", "GIT", "GPS", "CLASS", "GUI" 
-  ]
-  
-  
-];
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {participantData} = location.state;
+  const [words,setWords] = useState<string[][]>([]);
+  const [grid,setGrid] = useState<string[][]>([])
+
   const colors = ["#dc0073", "#ff7700", "#005ae0"];
-  const [chanceCount, setChanceCount] = useState<number>(() => {
-    const chance = localStorage.getItem('chance');
-    return chance ? parseInt(chance) : 30;
-  });
   const [selectedLetters, setSelectedLetters] = useState<string>('');
   const [isSelecting, setIsSelecting] = useState<boolean>(false);
   const [selectedPath, setSelectedPath] = useState<SelectedPathItem[]>([]);
   const [selectionDirection, setSelectionDirection] = useState<string | null>(null);
-  const [foundWords, setFoundWords] = useState<FoundWord[]>(() => {
-    const storedWords = localStorage.getItem('foundWords');
-    return storedWords ? JSON.parse(storedWords) : [];
-  });
-  const [score, setScore] = useState<number>(() => {
-    const storedScore = localStorage.getItem('score');
-    return storedScore ? JSON.parse(storedScore) : 0;
-  });
+  const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
+  const [score, setScore] = useState<number>(0);
+  const [chanceCount, setChanceCount] = useState<number>(30);
+  const [gameOver, __] = useState<boolean>(false);
+  const [_, setIsMobile] = useState<boolean>(false);
+  const [toastVisible, setToastVisible] = useState(false);
 
-  const [selectedGrid] = useState<number>(()=>{
-    const gridNum = localStorage.getItem('gridNum');
-    let index;
-    if(gridNum)
-    {
-      index = parseInt(gridNum);
-    }
-    else
-    {
-      index = Math.floor(Math.random() * 3);
-      localStorage.setItem('gridNum',index.toString());
-    }
-    return index;
-  })
-  
-  const [gameOver, setGameOver] = useState<boolean>(false);
+  const [selectedGrid,setSelectedGrid] = useState<number>(0); // Randomly select a grid
 
-  const getRandomColor = () => {
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
 
-  useEffect(() => {
-    if (chanceCount === 0) {
-      setGameOver(true);
-    }
-    if(chanceCount === 5)
-    {
-      toast.warn('only 5 chances left')
-    }
-  }, [chanceCount]);
-  useEffect(() => {
-    const handleMouseUp = () => {
-      if (words[selectedGrid].includes(selectedLetters) && !foundWords.some(word => word.word === selectedLetters)) {
-        const color = getRandomColor();
-        const newFoundWords = [...foundWords, { word: selectedLetters, path: selectedPath, color }];
-        setFoundWords(newFoundWords);
-        setScore(score + 1);
-        localStorage.setItem('foundWords', JSON.stringify(newFoundWords));
-        localStorage.setItem('score', JSON.stringify(score + 1));
-        if (newFoundWords.length === words[selectedGrid].length) {
-          setGameOver(true);
+  useEffect(()=>{
+      const fetchData = async () =>{
+        try {
+          const tempGrid = await fecthQuestions(participantData?.type); 
+          if (tempGrid) {
+            setSelectedGrid(participantData.round1.currentIndex)
+            const grids:string[][] = []
+            const wordsArr:string[][] = []
+            tempGrid.map((data)=>{
+              grids.push(data.grid)
+              wordsArr.push(data.words)
+            })
+            console.log(grids)
+            console.log(wordsArr)
+            setGrid(grids)
+            setWords(wordsArr);
+            
+          }
+        } catch (error) {
+          
         }
-      } else {
-        setSelectedPath([]);
       }
-      setChanceCount(prevCount => prevCount - 1);
-      setIsSelecting(false);
-      setSelectionDirection(null);
-      setSelectedLetters('');
-    };
-
-    if (isSelecting) {
-      window.addEventListener('mouseup', handleMouseUp);
+      fetchData();
+  },[navigate,participantData])
+  
+  useEffect(() => {
+    if (grid.length > 0 && words.length > 0) {
+      // Check local storage after grid and words are loaded
+      const savedState = JSON.parse(localStorage.getItem("word-search-state") || "{}");
+  
+      if (savedState.selectedGrid === selectedGrid) {
+        // Load saved state
+        setFoundWords(savedState.foundWords || []);
+        setScore(savedState.score || 0);
+        setChanceCount(savedState.chanceCount || 30);
+      } else {
+        // Initialize fresh state
+        const initialState = {
+          foundWords: [],
+          score: 0,
+          chanceCount: 30,
+          selectedGrid,
+        };
+        localStorage.setItem("word-search-state", JSON.stringify(initialState));
+      }
     }
+  }, [grid, words, selectedGrid]); // Dependency: Ensure this runs only after grid/words/selectedGrid is updated
+  useEffect(() => {
+    if (grid.length > 0 && words.length > 0) {
+      const state = {
+        foundWords,
+        score,
+        chanceCount,
+        selectedGrid,
+      };
+      localStorage.setItem("word-search-state", JSON.stringify(state));
+    }
+  }, [foundWords, score, chanceCount, selectedGrid, grid, words]);
+    
+  
 
-    return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isSelecting, selectedLetters, foundWords, score, words, chanceCount]);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
 
   const handleMouseDown = (letter: string, index: number) => {
-    if (gameOver) return; // Disable selection if game over
+    if (gameOver) return;
     setIsSelecting(true);
     setSelectedPath([{ letter, index }]);
     setSelectedLetters(letter);
-    setSelectionDirection(null); // Reset direction on new selection
+    setSelectionDirection(null);
   };
 
-  const handleMouseOver = (letter: string, index: number) => {
-    if (gameOver || !isSelecting) return; // Disable selection if game over or not selecting
+  const handleMouseMove = (letter: string, index: number) => {
+    if (gameOver || !isSelecting) return;
+
     const lastSelected = selectedPath[selectedPath.length - 1];
     const lastIndex = lastSelected.index;
 
@@ -152,24 +139,102 @@ const WordSearch: React.FC = () => {
     }
   };
 
+  const handleMouseUp = () => {
+    if (gameOver) return;
+    setIsSelecting(false);
+    checkWord(selectedLetters);
+  };
+
+  const handleTouchStart = (letter: string, index: number) => {
+    if (gameOver) return;
+    setIsSelecting(true);
+    setSelectedPath([{ letter, index }]);
+    setSelectedLetters(letter);
+    setSelectionDirection(null);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (gameOver || !isSelecting) return;
+  
+    // Get touch coordinates
+    const touch = e.touches[0];
+    const target = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement;
+  
+    if (target && target.dataset.index) {
+      const newIndex = parseInt(target.dataset.index, 10); // Get index from the dataset
+      const lastSelected = selectedPath[selectedPath.length - 1];
+      const lastIndex = lastSelected.index;
+  
+      // Only update if the new index is valid
+      if (isValidSelection(lastIndex, newIndex)) {
+        setSelectedPath([...selectedPath, { letter: target.innerText, index: newIndex }]);
+        setSelectedLetters(selectedLetters + target.innerText);
+      }
+    }
+  };
+  
+  
+
+  const handleTouchEnd = () => {
+    if (gameOver) return;
+    console.log("Touch end");
+    setIsSelecting(false);
+    checkWord(selectedLetters);
+  };
+
+  const checkWord = async (word: string) => {
+    if (words[selectedGrid].includes(word)) {
+      // If the word is found, highlight the word with a random color
+      const color = getRandomColor();
+      const newFoundWords = [...foundWords, { word, path: selectedPath, color }];
+      setFoundWords(newFoundWords);
+      await updateScore(participantData.lotNo,score,1);
+      setScore(score + 1);
+
+      
+      if (newFoundWords.length === words[selectedGrid].length) {
+        await updateCurrentIndex(participantData.lotNo,selectedGrid,1);
+        setSelectedGrid((prev)=>prev+1)
+      }
+    } else {
+      // Word is incorrect: reset the selection and reduce chances
+      if (!toastVisible) {  // Only show toast if no other toast is visible
+        setToastVisible(true);
+        toast.error(`Incorrect word: ${word}`, { 
+          autoClose: 2000,
+          onClose: () => setToastVisible(false)  // Reset the flag when toast closes
+        });
+      }
+      
+  
+      // Reset selected path and letters (remove colors)
+      setSelectedPath([]);
+      setSelectedLetters('');
+    }
+    setChanceCount((prev) => prev - 1);
+  };
+  
+
   const isValidSelection = (lastIndex: number, currentIndex: number): boolean => {
     const lastRow = Math.floor(lastIndex / 10);
     const lastCol = lastIndex % 10;
     const currentRow = Math.floor(currentIndex / 10);
     const currentCol = currentIndex % 10;
-
+  
+    // If no direction is set yet, determine the direction
     if (selectionDirection === null) {
       if (lastRow === currentRow && Math.abs(lastCol - currentCol) === 1) {
-        setSelectionDirection('row'); // Horizontal selection
+        setSelectionDirection('row');
       } else if (lastCol === currentCol && Math.abs(lastRow - currentRow) === 1) {
-        setSelectionDirection('column'); // Vertical selection
+        setSelectionDirection('column');
       } else if (Math.abs(lastRow - currentRow) === 1 && Math.abs(lastCol - currentCol) === 1) {
-        setSelectionDirection('diagonal'); // Diagonal selection
+        setSelectionDirection('diagonal');
       } else {
         return false;
       }
     }
-
+  
+    // Check the direction and return true if valid
     switch (selectionDirection) {
       case 'row':
         return lastRow === currentRow && Math.abs(lastCol - currentCol) === 1;
@@ -181,6 +246,7 @@ const WordSearch: React.FC = () => {
         return false;
     }
   };
+  
 
   const isCellSelected = (index: number): boolean => {
     return selectedPath.some(item => item.index === index);
@@ -195,67 +261,37 @@ const WordSearch: React.FC = () => {
     return '';
   };
 
-  const grid =[ [
-    'S', 'Y', 'S', 'T', 'E', 'M', 'F', 'I', 'B', 'P',
-    'F', 'Q', 'Z', 'I', 'P', 'D', 'O', 'S', 'Y', 'R', 
-    'T', 'I', 'L', 'B', 'U', 'Z', 'O', 'T', 'T', 'O', 
-    'O', 'U', 'L', 'P', 'S', 'F', 'H', 'C', 'E', 'C', 
-    'Y', 'D', 'C', 'E', 'T', 'O', 'E', 'N', 'S', 'E', 
-    'R', 'A', 'M', 'W', 'N', 'K', 'A', 'L', 'U', 'S', 
-    'O', 'Z', 'A', 'O', 'A', 'M', 'P', 'M', 'O', 'S', 
-    'M', 'R', 'T', 'V', 'F', 'O', 'R', 'T', 'M', 'O', 
-    'E', 'R', 'A', 'W', 'D', 'R', 'A', 'H', 'N', 'R', 
-    'M', 'J', 'D', 'A', 'T', 'A', 'B', 'A', 'S', 'E'
-  ],
-  [
-    'B', 'U', 'G', 'S', 'B', 'I', 'A', 'S', 'K', 'B',
-    'W', 'I', 'F', 'I', 'O', 'A', 'E', 'M', 'I', 'L',
-    'H', 'N', 'N', 'R', 'O', 'R', 'D', 'I', 'S', 'K',
-    'R', 'T', 'I', 'A', 'T', 'R', 'O', 'P', 'E', 'C',
-    'E', 'E', 'A', 'N', 'R', 'A', 'C', 'I', 'R', 'O',
-    'S', 'R', 'M', 'U', 'S', 'Y', 'L', 'X', 'V', 'L',
-    'W', 'N', 'O', 'Q', 'P', 'R', 'I', 'E', 'E', 'B',
-    'O', 'E', 'D', 'H', 'A', 'G', 'E', 'L', 'R', 'D',
-    'R', 'T', 'P', 'H', 'O', 'L', 'N', 'S', 'W', 'B',
-    'B', 'A', 'C', 'K', 'U', 'P', 'T', 'S', 'K', 'M'
-  ],
-  [
-    'K', 'B', 'D', 'A', 'O', 'L', 'N', 'W', 'O', 'D',
-    'U', 'E', 'L', 'G', 'O', 'O', 'G', 'Z', 'I', 'A',
-    'N', 'M', 'Y', 'M', 'U', 'G', 'N', 'P', 'O', 'T',
-    'I', 'A', 'H', 'B', 'A', 'I', 'S', 'G', 'S', 'A',
-    'X', 'I', 'D', 'U', 'O', 'S', 'U', 'R', 'I', 'V',
-    'E', 'L', 'M', 'I', 'A', 'A', 'B', 'S', 'E', 'T',
-    'E', 'N', 'I', 'L', 'N', 'O', 'R', 'X', 'M', 'L',
-    'R', 'F', 'C', 'D', 'W', 'M', 'E', 'D', 'O', 'M',
-    'T', 'N', 'O', 'I', 'T', 'A', 'R', 'E', 'T', 'I',
-    'D', 'I', 'R', 'E', 'C', 'T', 'O', 'R', 'Y', 'K'
-  ]
-];
 
 
   return (
-    <div className={`wordGamebg h-screen flex justify-center items-center w-full`}>
+    <div className={`wordGamebg overflow-hidden h-screen flex justify-center items-center w-full`}>
       <Snowfall />
-      <div className='w-full max-md:flex-col max-sm:flex-col flex justify-center gap-2 items-center h-[32rem]'>
+      <div className='overflow-hidden w-full max-md:flex-col max-sm:flex-col flex justify-center gap-2 items-center h-[32rem]'>
         <div className='max-md:flex max-sm:flex border-teal-500 shadow-lg shadow-white/30 rounded-lg border-2 bg-black/60 hidden items-center flex-col justify-between w-fit px-10 text-2xl font-playfair text-white'>
           <p className=''>Chance Left : {chanceCount}</p>
           <p className=''>Selected Letters: {selectedLetters}</p>
           <p className=''>Score: {score}</p>
         </div>
         <div className='grid grid-cols-10 gap-1 w-fit p-3 bg-black/60 border-2 h-full border-teal-500 rounded-lg shadow-lg shadow-white/30'>
-          {grid[selectedGrid].map((letter, index) => (
+          {grid[selectedGrid]?.map((letter, index) => (
             <div
-              key={index} 
-              className={`select-none flex justify-center items-center shadow-lg shadow-teal-700 max-sm:w-8 max-sm:h-8 max-md:w-8 max-md:h-8 w-10 h-10 border-2 border-black rounded-lg cursor-pointer ${
-                isCellSelected(index) && isSelecting ? 'bg-gray-500' : 'bg-teal-700'
-              }`}
-              onClick={() => handleMouseDown(letter, index)}
-              onMouseMove={() => handleMouseOver(letter, index)}
-              style={{ backgroundColor:  getCellColor(index), pointerEvents: isCellSelected(index) && isSelecting ? 'none' : 'auto' }}
-            >
-              <p className='font-playfair text-white'>{letter}</p>
-            </div>
+            key={index}
+            data-index={index}
+            className={`select-none flex justify-center items-center shadow-lg shadow-teal-700 max-sm:w-8 max-sm:h-8 max-md:w-8 max-md:h-8 w-10 h-10 border-2 border-black rounded-lg cursor-pointer ${
+              isCellSelected(index) ? 'bg-gray-500' : 'bg-teal-700'
+            }`}
+            onMouseDown={() => handleMouseDown(letter, index)}
+            onMouseMove={() => handleMouseMove(letter, index)}
+            onMouseUp={handleMouseUp}
+            onTouchStart={() => handleTouchStart(letter, index)}
+            onTouchMove={(e) => handleTouchMove(e)}
+            onTouchEnd={handleTouchEnd}
+            style={{
+              backgroundColor: getCellColor(index),
+            }}
+          >
+            <p className="font-playfair text-white">{letter}</p>
+          </div>
           ))}
         </div>
         <div className='flex flex-col border-2 h-full overflow-auto max-sm:hidden max-md:hidden  border-teal-500 shadow-lg shadow-white/30 rounded-lg w-72 p-5 bg-black/60 text-white font-playfair text-xl'>

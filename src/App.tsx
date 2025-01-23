@@ -5,6 +5,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./components/ToggleContext";
 import Thank from "./components/Thank";
 import { toast, ToastContainer } from "react-toastify";
+import CrossWord from "./components/CrossWord";
+import Game from "./components/Game";
+
 
 const App: React.FC = () => {
   const warningToastMessages: string[] = [
@@ -12,10 +15,9 @@ const App: React.FC = () => {
     "Inspecting the game? Ah, the mysteries lie in playing, not peeking!",
     "Nice try! But this isn’t Hogwarts, and no magic keys work here.",
     "Caught you red-handed! Stick to the rules and enjoy the game.",
-    "Error 404: Cheating skills not supported in this game!",
   ];
 
-  const [isFullScreen, setIsFullScreen] = useState(true);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const warnPlayer = () => {
     const randomMessage =
@@ -95,6 +97,8 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/wordGame" element={<WordSearch />} />
+            <Route path="/crossWord" element={<CrossWord />} />
+            <Route path="/riddleRunner" element={<Game/>}/>
             <Route path="/end" element={<Thank />} />
           </Routes>
         )}
