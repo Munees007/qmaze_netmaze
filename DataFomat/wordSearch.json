@@ -1,0 +1,20 @@
+{
+	"gridData":[
+  	"B", "U", "G", "S", "B", "I", "A", "S", "K", "B",
+  	"W", "I", "F", "I", "O", "A", "E", "M", "I", "L",
+  	"H", "N", "N", "R", "O", "R", "D", "I", "S", "K",
+	  "R", "T", "I", "A", "T", "R", "O", "P", "E", "C",
+ 	 "E", "E", "A", "N", "R", "A", "C", "I", "R", "O",
+  "S", "R", "M", "U", "S", "Y", "L", "X", "V", "L",
+  "W", "N", "O", "Q", "P", "R", "I", "E", "E", "B",
+  "O", "E", "D", "H", "A", "G", "E", "L", "R", "D",
+  "R", "T", "P", "H", "O", "L", "N", "S", "W", "B",
+  "B", "A", "C", "K", "U", "P", "T", "S", "K", "M"
+],
+	"wordsData":[
+  "SYSTEM", "RAM", "DATABASE", "DOS", "ZIP", "CSS",
+  "HARDWARE", "PROCESSOR", "BYTE", "HEAP",
+  "BIT", "MEMORY", "MOUSE", "HTML",
+  "SQL", "PYTHON", "OS", "JAVA", "CUT", "FILE"
+]
+}
