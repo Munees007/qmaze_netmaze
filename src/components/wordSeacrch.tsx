@@ -58,8 +58,8 @@ const WordSearch: React.FC = () => {
             const grids:string[][] = []
             const wordsArr:string[][] = []
             tempGrid.map((data)=>{
-              grids.push(data.grid)
-              wordsArr.push(data.words)
+              grids.push(data.grid as string[])
+              wordsArr.push(data.words as string[])
             })
             console.log(grids)
             console.log(wordsArr)

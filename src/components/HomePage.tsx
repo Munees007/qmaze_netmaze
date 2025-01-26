@@ -53,7 +53,7 @@ const HomePage = () => {
       ],
       name: "Cross Word Puzzle",
       imgPath: "./netmaze.png",
-      navigateTo: "Cross Word Puzzle",
+      navigateTo: "/crossWord",
       starts: "01.02.2025"
     }
   ]);
@@ -96,9 +96,13 @@ const HomePage = () => {
   };
 
   const handleNavigateToPlay = (index: number) => {
+    if(currentRound == -1)
+    {
+      toast.info("Today's questions have ended. Please come back tomorrow for the next set of questions!");
+    }
     if (currentRound == index + 1) {
       toast.info("Event begins");
-      navigate(roundData[0].navigateTo,{state:{participantData}});
+      navigate(roundData[index].navigateTo,{state:{participantData}});
     } else {
       toast.info("Event not yet started, please wait...");
     }
