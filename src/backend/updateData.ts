@@ -30,7 +30,9 @@ export const updateScore = async (lotNo:number,index:number,round:number) =>{
         }
         else
         {
-            const key:string = `round${round}.score`;
+            const data = getData.docs[0].data();
+            const currentIndex:number = data?.[`round${round}`]?.currentIndex;
+            const key:string = `round${round}.score${currentIndex}`;
             await updateDoc(getData.docs[0].ref,{[key]:index+1})
         }
     } catch (error) {

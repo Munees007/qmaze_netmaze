@@ -45,40 +45,40 @@ const App: React.FC = () => {
     setIsFullScreen(true);
   };
 
-  useEffect(() => {
-    document.addEventListener("fullscreenchange", monitorFullScreen);
+  // useEffect(() => {
+  //   document.addEventListener("fullscreenchange", monitorFullScreen);
 
-    const disableInspect = (e: MouseEvent | KeyboardEvent) => {
-      // Disable right-click
-      if (e.type === "contextmenu") {
-        warnPlayer();
-        e.preventDefault();
-      }
+  //   const disableInspect = (e: MouseEvent | KeyboardEvent) => {
+  //     // Disable right-click
+  //     if (e.type === "contextmenu") {
+  //       warnPlayer();
+  //       e.preventDefault();
+  //     }
 
-      // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J
-      if (e.type === "keydown") {
-        const keyboardEvent = e as KeyboardEvent;
-        if (
-          keyboardEvent.key === "F12" || // F12 key
-          (keyboardEvent.ctrlKey &&
-            keyboardEvent.shiftKey &&
-            (keyboardEvent.key === "I" || keyboardEvent.key === "J")) // Ctrl+Shift+I or J
-        ) {
-          warnPlayer();
-          keyboardEvent.preventDefault();
-        }
-      }
-    };
+  //     // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J
+  //     if (e.type === "keydown") {
+  //       const keyboardEvent = e as KeyboardEvent;
+  //       if (
+  //         keyboardEvent.key === "F12" || // F12 key
+  //         (keyboardEvent.ctrlKey &&
+  //           keyboardEvent.shiftKey &&
+  //           (keyboardEvent.key === "I" || keyboardEvent.key === "J")) // Ctrl+Shift+I or J
+  //       ) {
+  //         warnPlayer();
+  //         keyboardEvent.preventDefault();
+  //       }
+  //     }
+  //   };
 
-    document.addEventListener("contextmenu", disableInspect);
-    document.addEventListener("keydown", disableInspect);
+  //   document.addEventListener("contextmenu", disableInspect);
+  //   document.addEventListener("keydown", disableInspect);
 
-    return () => {
-      document.removeEventListener("fullscreenchange", monitorFullScreen);
-      document.removeEventListener("contextmenu", disableInspect);
-      document.removeEventListener("keydown", disableInspect);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("fullscreenchange", monitorFullScreen);
+  //     document.removeEventListener("contextmenu", disableInspect);
+  //     document.removeEventListener("keydown", disableInspect);
+  //   };
+  // }, []);
 
   return (
     <ThemeProvider>

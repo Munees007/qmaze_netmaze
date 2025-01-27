@@ -47,6 +47,7 @@ const WordSearch: React.FC = () => {
   const [toastVisible, setToastVisible] = useState(false);
 
   const [selectedGrid,setSelectedGrid] = useState<number>(0); // Randomly select a grid
+  const [dailyLimit, ___] = useState<number>(2);
 
 
   useEffect(()=>{
@@ -65,6 +66,16 @@ const WordSearch: React.FC = () => {
             console.log(wordsArr)
             setGrid(grids)
             setWords(wordsArr);
+
+             // Restrict to daily limit
+          const startIndex = participantData.round1.currentIndex;
+          const endIndex = Math.min(
+            startIndex + dailyLimit,
+            tempGrid.length
+          ); // Ensure we don't exceed available grids
+          setSelectedGrid(startIndex); // Start from currentIndex
+          setGrid(grids.slice(startIndex, endIndex)); // Only show grids within the daily limit
+          setWords(wordsArr.slice(startIndex, endIndex));
             
           }
         } catch (error) {
@@ -73,6 +84,58 @@ const WordSearch: React.FC = () => {
       }
       fetchData();
   },[navigate,participantData])
+
+  useEffect(() => {
+    if (chanceCount === 0) {
+      // Update the score and proceed to the next grid
+      const moveToNextGrid = async () => {
+        await updateCurrentIndex(participantData.lotNo, selectedGrid, 1);
+        await updateScore(participantData.lotNo, score, 0); // Update score
+  
+        // Reset local storage
+        localStorage.setItem(
+          "word-search-state",
+          JSON.stringify({
+            foundWords: [],
+            score: 0,
+            chanceCount: 30,
+            selectedGrid: selectedGrid + 1, // Move to the next grid
+          })
+        );
+  
+        // Update selected grid
+        setSelectedGrid((prev) => prev + 1);
+  
+        // Reset state for the new grid
+        setFoundWords([]);
+        setScore(0);
+        setChanceCount(30);
+        setSelectedPath([]);
+        setSelectedLetters('');
+        setSelectionDirection(null);
+      };
+  
+      moveToNextGrid();
+    }
+  }, [chanceCount, participantData, selectedGrid, score]);
+  
+
+  const resetData = () =>{
+    const initialState = {
+      foundWords: [],
+      score: 0,
+      chanceCount: 30,
+      selectedGrid,
+    };
+    localStorage.setItem("word-search-state", JSON.stringify(initialState));
+    // Reset state for the new grid
+    setFoundWords([]);
+    setScore(0);
+    setChanceCount(30);
+    setSelectedPath([]);
+    setSelectedLetters('');
+    setSelectionDirection(null);
+  }
   
   useEffect(() => {
     if (grid.length > 0 && words.length > 0) {
@@ -194,6 +257,7 @@ const WordSearch: React.FC = () => {
       
       if (newFoundWords.length === words[selectedGrid].length) {
         await updateCurrentIndex(participantData.lotNo,selectedGrid,1);
+        resetData();
         setSelectedGrid((prev)=>prev+1)
       }
     } else {

@@ -92,6 +92,7 @@ const HomePage = () => {
 
   const handleLogout = async () => {
     await LogoutParticicpant(auth.currentUser?.email!);
+    setIsLogined(false);
     navigate("/"); // Redirect to homepage after logout
   };
 
