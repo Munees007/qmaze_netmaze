@@ -83,7 +83,7 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        {!isFullScreen && (
+        {!isFullScreen &&  (
           <div className="bg-gray-900 w-full h-screen flex justify-center items-center">
             <button
               onClick={handleFullScreenToggle}

@@ -17,6 +17,7 @@ type RoundDataType = {
   imgPath: string;
   navigateTo: string;
   starts: string;
+  ends: string;
 };
 
 const HomePage = () => {
@@ -31,14 +32,13 @@ const HomePage = () => {
         "The terms can appear in any direction: horizontally, vertically, or diagonally.",
         "To select a word, simply click and drag your mouse over the letters of the word, making sure to follow the correct sequence of letters.",
         "Each word may only be used once. After you have found a word, mark it off the list provided.",
-        "The game starts as soon as you begin, and you will be racing against the clock, so aim to find as many words as possible before time expires.",
-        "You will have access to a limited number of hints. Use them wisely to reveal parts of words you're stuck on.",
-        "Remember, the clock is ticking, and every second counts. Stay focused, and good luck!"
+        "You will have access to a limited number of chances. Use them wisely to reveal parts of words you're stuck on.",
       ],
       name: "Word Search",
       imgPath: "./netmaze.png",
       navigateTo: "/wordGame",
-      starts: "29.01.2025"
+      starts: "29.01.2025",
+      ends: "31.01.2025",
     },
     {
       Rule: [
@@ -47,14 +47,14 @@ const HomePage = () => {
         "Each clue corresponds to a word that you must enter into the grid, making sure the letters match correctly with the numbered boxes.",
         "Ensure that the answers fit in the grid, both in terms of the correct letters and the correct placement.",
         "If you make an error, simply correct the letters or clear them to try again.",
-        "The goal is to complete the puzzle by filling in all the correct answers. Take your time, but aim to finish within the time limit.",
-        "The timer will track your progress, so be mindful of the time as you solve the clues. Accuracy is key!",
+        "The goal is to complete the puzzle by filling in all the correct answers.",
         "Good luck, and may the best minds prevail in solving the puzzle!"
       ],
       name: "Cross Word Puzzle",
       imgPath: "./netmaze.png",
       navigateTo: "/crossWord",
-      starts: "01.02.2025"
+      starts: "01.02.2025",
+      ends: "03.02.2025",
     }
   ]);
 
@@ -154,7 +154,7 @@ const HomePage = () => {
           {roundData.map((round, index) => (
             <div
               key={index}
-              className={` bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 gap-1 text-white w-fit p-3 rounded-md shadow-lg shadow-black flex flex-col justify-center items-center`}
+              className={`bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 gap-1 text-white w-fit p-3 rounded-md shadow-lg shadow-black flex flex-col justify-center items-center`}
             >
               <p className="text-2xl font-bold font-playfair">{round.name}</p>
               <img src={round.imgPath} className="w-60 h-60" alt={`Round ${index + 1}`} />
@@ -164,6 +164,8 @@ const HomePage = () => {
               >
                 <BsEye size={30} /> Rules
               </span>
+              <p className="text-lg font-bold">Starts: {round.starts}</p>
+              <p className="text-lg font-bold">Ends: {round.ends}</p>
               <button
                 onClick={() => handleNavigateToPlay(index)}
                 className="mt-2 bg-green-500 hover:bg-green-800 hover:scale-105 active:scale-95 w-full text-xl font-bold border-2 border-black p-2 rounded-md shadow-md shadow-black"

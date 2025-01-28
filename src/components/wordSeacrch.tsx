@@ -47,7 +47,6 @@ const WordSearch: React.FC = () => {
   const [toastVisible, setToastVisible] = useState(false);
 
   const [selectedGrid,setSelectedGrid] = useState<number>(0); // Randomly select a grid
-  const [dailyLimit, ___] = useState<number>(2);
 
 
   useEffect(()=>{
@@ -55,29 +54,28 @@ const WordSearch: React.FC = () => {
         try {
           const tempGrid = await fecthQuestions(participantData?.type); 
           if (tempGrid) {
-            setSelectedGrid(participantData.round1.currentIndex)
-            const grids:string[][] = []
-            const wordsArr:string[][] = []
-            tempGrid.map((data)=>{
-              grids.push(data.grid as string[])
-              wordsArr.push(data.words as string[])
-            })
-            console.log(grids)
-            console.log(wordsArr)
-            setGrid(grids)
-            setWords(wordsArr);
-
-             // Restrict to daily limit
-          const startIndex = participantData.round1.currentIndex;
-          const endIndex = Math.min(
-            startIndex + dailyLimit,
-            tempGrid.length
-          ); // Ensure we don't exceed available grids
-          setSelectedGrid(startIndex); // Start from currentIndex
-          setGrid(grids.slice(startIndex, endIndex)); // Only show grids within the daily limit
-          setWords(wordsArr.slice(startIndex, endIndex));
-            
+            if(participantData.round1.currentIndex < tempGrid.length)
+            {
+              setSelectedGrid(participantData.round1.currentIndex)
+              const grids:string[][] = []
+              const wordsArr:string[][] = []
+              tempGrid.map((data)=>{
+                grids.push(data.grid as string[])
+                wordsArr.push(data.words as string[])
+              })
+              console.log(grids)
+              console.log(wordsArr)
+              setGrid(grids)
+              setWords(wordsArr); 
+            }
+            else
+            {
+              toast.info("You have completed all the grids for this round.",{autoClose: 10,onClose:()=>{
+                navigate('/');
+              }})
+            }
           }
+            
         } catch (error) {
           
         }

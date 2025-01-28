@@ -59,6 +59,7 @@ const CrossWord: React.FC = () => {
   const location = useLocation();
   const {participantData} = location.state;
   const isMobile = useIsMobile();
+
   useEffect(()=>{
         const fetchData = async () =>{
           try {

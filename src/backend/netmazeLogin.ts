@@ -18,7 +18,7 @@ export const isNetmazeParticipant = async (email:string) =>{
 
         if(getDocRef.docs[0].data().isLogin === true)
         {
-            toast.error("Already a user is loggedined");
+            toast.error("Already a user is logined with this email");
             auth.signOut();
             return;
         }
