@@ -87,7 +87,7 @@ const WordSearch: React.FC = () => {
     if (chanceCount === 0) {
       // Update the score and proceed to the next grid
       const moveToNextGrid = async () => {
-        await updateCurrentIndex(participantData.lotNo, selectedGrid, 1);
+        await updateCurrentIndex(participantData.lotNo, 1);
         await updateScore(participantData.lotNo, score, 0); // Update score
   
         // Reset local storage
@@ -254,7 +254,7 @@ const WordSearch: React.FC = () => {
 
       
       if (newFoundWords.length === words[selectedGrid].length) {
-        await updateCurrentIndex(participantData.lotNo,selectedGrid,1);
+        await updateCurrentIndex(participantData.lotNo,1);
         resetData();
         setSelectedGrid((prev)=>prev+1)
       }

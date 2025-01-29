@@ -201,7 +201,7 @@ const CrossWord: React.FC = () => {
     setScore(newScore);
     if(newScore == 20)
     {
-      await updateCurrentIndex(participantData.lotNo,currentQuestionIndex,2);
+      await updateCurrentIndex(participantData.lotNo,2);
       if(allQuestionsData.length > currentQuestionIndex+1)
         setCurrentQuestionIndex(currentQuestionIndex+1);
     }
