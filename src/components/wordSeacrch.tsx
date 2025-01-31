@@ -1,4 +1,4 @@
-noimport React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Snowfall } from 'react-snowfall';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css'
