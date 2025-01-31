@@ -70,6 +70,7 @@ const WordSearch: React.FC = () => {
             }
             else
             {
+              console.log(tempGrid.length)
               toast.info("You have completed all the grids for this round.",{autoClose: 10,onClose:()=>{
                 navigate('/');
               }})
@@ -254,9 +255,20 @@ const WordSearch: React.FC = () => {
 
       
       if (newFoundWords.length === words[selectedGrid].length) {
-        await updateCurrentIndex(participantData.lotNo,1);
-        resetData();
-        setSelectedGrid((prev)=>prev+1)
+        if(participantData?.round1.currentIndex < 10)
+        {
+          await updateCurrentIndex(participantData.lotNo,1);
+          resetData();
+          setSelectedGrid((prev)=>prev+1)
+        }
+        else
+        {
+          toast.success("You have completed all the grids for this round.",{autoClose: 10,onClose:()=>{
+            navigate('/');
+          }})
+        }
+        
+        
       }
     } else {
       // Word is incorrect: reset the selection and reduce chances

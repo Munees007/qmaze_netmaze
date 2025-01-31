@@ -7,6 +7,8 @@ import OnScreenKeyboard from "./onScreenKeyboard";
 import useIsMobile from "../Custom/Hooks/isMobile";
 import  { CrossWordType, fecthQuestions } from "../backend/fetchData";
 import { updateCurrentIndex, updateScore } from "../backend/updateData";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/ReactToastify.min.css'
 // Utility functions for managing local storage and expiration time
 const STORAGE_KEY = "crossword-answers";
 const SCORE_KEY = "crossword-score";
@@ -201,9 +203,17 @@ const CrossWord: React.FC = () => {
     setScore(newScore);
     if(newScore == 20)
     {
-      await updateCurrentIndex(participantData.lotNo,2);
-      if(allQuestionsData.length > currentQuestionIndex+1)
-        setCurrentQuestionIndex(currentQuestionIndex+1);
+      if(participantData?.round2?.currentIndex < allQuestionsData.length)
+      {
+        await updateCurrentIndex(participantData.lotNo,2);
+        if(allQuestionsData.length > currentQuestionIndex+1)
+          setCurrentQuestionIndex(currentQuestionIndex+1);
+      }
+      else
+      {
+        toast.success("Congratulations! You have completed the round.",{autoClose:5000,onClose:()=>{navigate("/")}});
+      }
+      
     }
   };
 
@@ -284,7 +294,7 @@ const CrossWord: React.FC = () => {
       </div>
       </>
     }
-      
+      <ToastContainer/>
     </div>
   );
 };
