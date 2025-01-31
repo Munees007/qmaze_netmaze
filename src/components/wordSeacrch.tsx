@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+noimport React, { useEffect, useState } from 'react';
 import { Snowfall } from 'react-snowfall';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/ReactToastify.min.css'
@@ -54,7 +54,7 @@ const WordSearch: React.FC = () => {
         try {
           const tempGrid = await fecthQuestions(participantData?.type); 
           if (tempGrid) {
-            if(participantData.round1.currentIndex < tempGrid.length)
+            if(participantData.round1.currentIndex < 10)
             {
               setSelectedGrid(participantData.round1.currentIndex)
               const grids:string[][] = []
