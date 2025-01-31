@@ -36,7 +36,7 @@ export const updateScore = async (lotNo:number,index:number,round:number) =>{
             const currentIndex:number = data?.[`round${round}`]?.currentIndex;
             const key:string = `round${round}.score${currentIndex}`;
             await updateDoc(getData.docs[0].ref, {
-                [key]: index + 1, // Update the score
+                [key]: round === 2 ? index : index + 1, // Update the score
                 [`round${round}.time${currentIndex}`]: serverTimestamp(), // Add the timestamp
               });
         }

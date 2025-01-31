@@ -57,8 +57,10 @@ const CrossWord: React.FC = () => {
   const [feedback, setFeedback] = useState<Record<string, boolean | undefined>>({});
   const [score, setScore] = useState<number>(initialScore);
   const [allQuestionsData,setAllQuestionsData] = useState<CrossWordType[]>([]);
+  const [currentData,setCurrentData] = useState<CrossWordType>();
   const [currentQuestionIndex,setCurrentQuestionIndex] = useState<number>(0);
   const location = useLocation();
+  const [cellData,setCellData] = useState<any[]>([]);
   const {participantData} = location.state;
   const isMobile = useIsMobile();
 
@@ -70,7 +72,7 @@ const CrossWord: React.FC = () => {
             if (tempGrid) {
               console.log(tempGrid);
               setAllQuestionsData(tempGrid);
-              setCurrentQuestionIndex(participantData?.round2?.currentIndex);
+              checkGameOver(tempGrid);
             }
           } catch (error) {
             
@@ -111,7 +113,7 @@ const CrossWord: React.FC = () => {
 
 
   const getCellData = () => {
-    if (!allQuestionsData[currentQuestionIndex]) {
+    if (!currentData) {
       return Array.from({ length: 400 }, () => ({
         isInteractive: false,
         value: "",
@@ -127,7 +129,7 @@ const CrossWord: React.FC = () => {
     }));
     
     // Populate across clues
-    Object.entries(allQuestionsData[currentQuestionIndex]?.grid?.across).forEach(([key, { answer, row, col }]) => {
+    Object.entries(currentData?.grid?.across).forEach(([key, { answer, row, col }]) => {
       answer.split('').forEach((_, index) => {
         const cellIndex = row * 20 + (col + index);
         cellData[cellIndex].isInteractive = true;
@@ -142,7 +144,7 @@ const CrossWord: React.FC = () => {
     });
     
     // Populate down clues
-    Object.entries(allQuestionsData[currentQuestionIndex]?.grid?.down).forEach(([key, { answer, row, col }]) => {
+    Object.entries(currentData?.grid?.down).forEach(([key, { answer, row, col }]) => {
       answer.split('').forEach((_, index) => {
         const cellIndex = (row + index) * 20 + col;
         cellData[cellIndex].isInteractive = true;
@@ -158,6 +160,13 @@ const CrossWord: React.FC = () => {
     
     return cellData;
   };
+
+  useEffect(()=>{
+    if(allQuestionsData.length > 0)
+    {
+      setCellData(getCellData());
+    }
+  },[allQuestionsData,inputs,feedback])
 
   const checkWord = (
     _: string,
@@ -178,21 +187,50 @@ const CrossWord: React.FC = () => {
         isCorrect = false;
       }
     });
+    console.log(isCorrect);
     return isCorrect;
   };
-
+  const checkGameOver = (grid: CrossWordType[]) => {
+    console.log(grid.length);
+    if(participantData?.round2?.currentIndex < grid.length)
+      {
+        setCurrentQuestionIndex(participantData?.round2?.currentIndex);
+        grid.map((data)=>{
+            if(data.currentQuestion == participantData?.round2?.currentIndex)
+            {
+              setCurrentData(data);
+            }
+            else if(grid.length == participantData?.round2?.currentIndex)
+            {
+              toast.success("Questions are out of stack, wait for some time.",{autoClose:false,onClose:()=>{navigate("/")}});
+            }
+            else
+            {
+              toast.success("Questions are out of stack, wait for some time.",{autoClose:false,onClose:()=>{navigate("/")}});
+            }
+        })
+      }
+      else if(grid.length == participantData?.round2?.currentIndex)
+      {
+        toast.success("Questions are out of stack, wait for some time.",{autoClose:false,onClose:()=>{navigate("/")}});
+      }
+      else
+      {
+        toast.success("Questions are out of stack, wait for some time.",{autoClose:false,onClose:()=>{navigate("/")}});
+      }
+  }
 
   const checkAnswers = async () => {
     const newFeedback: Record<string, boolean | undefined> = {};
     let newScore = 0;
 
-    Object.entries(allQuestionsData[currentQuestionIndex]?.grid?.across).forEach(([key, { answer, row, col }]) => {
+    Object.entries(currentData?.grid.across!).forEach(([key, { answer, row, col }]) => {
       const isCorrect = checkWord(key, answer, row, col, true);
       newFeedback[key] = isCorrect;
       if (isCorrect) newScore += 1;
     });
 
-    Object.entries(allQuestionsData[currentQuestionIndex]?.grid?.down).forEach(([key, { answer, row, col }]) => {
+    Object.entries(currentData?.grid?.down!).forEach(([key, { answer, row, col }]) => {
       const isCorrect = checkWord(key, answer, row, col, false);
       newFeedback[key] = isCorrect;
       if (isCorrect) newScore += 1;
@@ -203,21 +241,22 @@ const CrossWord: React.FC = () => {
     setScore(newScore);
     if(newScore == 20)
     {
-      if(participantData?.round2?.currentIndex < allQuestionsData.length)
+      if(participantData?.round2?.currentIndex + 1 < allQuestionsData.length)
       {
         await updateCurrentIndex(participantData.lotNo,2);
-        if(allQuestionsData.length > currentQuestionIndex+1)
+        checkGameOver(allQuestionsData);
+        if(currentQuestionIndex < allQuestionsData.length)
           setCurrentQuestionIndex(currentQuestionIndex+1);
       }
       else
       {
-        toast.success("Congratulations! You have completed the round.",{autoClose:5000,onClose:()=>{navigate("/")}});
+        toast.success("Congratulations! You have completed todays cross word.",{autoClose:false,onClose:()=>{navigate("/")}});
       }
       
     }
   };
 
-  const cellData = getCellData();
+  
 
   
   const handleClick = (index:number)=>{
@@ -230,10 +269,14 @@ const CrossWord: React.FC = () => {
   return (
     <div className="bg-[#1E1E2F] w-full h-screen overflow-auto items-center flex max-sm:flex-col">
     {
-      allQuestionsData.length === 0 ? <p>Loading...</p> : 
+      allQuestionsData.length === 0 && !currentData  ? <p>Loading...</p> : 
       <>
 <div className="w-[65rem] max-sm:w-fit h-screen overflow-auto bg-blue-400">
-        <Question />
+{currentData ? (
+    <Question ques={currentData.words!} />
+  ) : (
+    <p>Loading question data...</p> // Placeholder while currentData is not available
+  )}
       </div>
       <div className="flex flex-col p-4 w-full h-full inset-0 justify-center items-center">
         <div className="flex flex-col w-full">

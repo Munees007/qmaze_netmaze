@@ -62,7 +62,7 @@ export const fecthQuestions = async (deptType:string):Promise<QuestionType[] | C
     try{
         const collectionRef = collection(db,"netmazeQuestions");
         const currentRound = await getCurrentRound();
-        const questions = await getDocs(query(collectionRef,where("round","==",currentRound),where("type","==",deptType)));
+        const questions = await getDocs(query(collectionRef,where("round","==",2),where("type","==",deptType)));
             if(currentRound == 0)
             {
                 const data:QuestionType[] = [];
