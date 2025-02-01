@@ -103,6 +103,20 @@ export const fecthQuestions = async (deptType:string):Promise<QuestionType[] | C
     }
 }
 
+export const getCurrentIndex = async (lotNo:number) =>{
+    try {
+        const  collectionRef = collection(db,"netmazeParticipants");
+        const getDocRef = await getDocs(query(collectionRef,where("lotNo","==",lotNo)));
+        if(getDocRef.empty)
+        {
+            toast.error("no user found");
+            return;
+        }
+        return getDocRef.docs[0].data().round2.currentIndex;
+    } catch (error) {
+    }
+}
+
 
 // export const fetchQuestions = async (event:number) =>{
 //     try {

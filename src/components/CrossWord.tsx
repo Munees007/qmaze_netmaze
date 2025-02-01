@@ -5,7 +5,7 @@ import GridBtn from "./GridBtn";
 import Question from "./question";
 import OnScreenKeyboard from "./onScreenKeyboard";
 import useIsMobile from "../Custom/Hooks/isMobile";
-import  { CrossWordType, fecthQuestions } from "../backend/fetchData";
+import  { CrossWordType, fecthQuestions, getCurrentIndex } from "../backend/fetchData";
 import { updateCurrentIndex, updateScore } from "../backend/updateData";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/ReactToastify.min.css'
@@ -67,12 +67,10 @@ const CrossWord: React.FC = () => {
   useEffect(()=>{
         const fetchData = async () =>{
           try {
-            console.log("fetched")
             const tempGrid:CrossWordType[] = await fecthQuestions(participantData?.type) as CrossWordType[]; 
             if (tempGrid) {
-              console.log(tempGrid);
               setAllQuestionsData(tempGrid);
-              checkGameOver(tempGrid);
+              await checkGameOver(tempGrid);
             }
           } catch (error) {
             
@@ -166,7 +164,7 @@ const CrossWord: React.FC = () => {
     {
       setCellData(getCellData());
     }
-  },[allQuestionsData,inputs,feedback])
+  },[allQuestionsData,inputs,feedback,currentData])
 
   const checkWord = (
     _: string,
@@ -187,38 +185,44 @@ const CrossWord: React.FC = () => {
         isCorrect = false;
       }
     });
-    console.log(isCorrect);
     return isCorrect;
   };
-  const checkGameOver = (grid: CrossWordType[]) => {
-    console.log(grid.length);
-    if(participantData?.round2?.currentIndex < grid.length)
-      {
-        setCurrentQuestionIndex(participantData?.round2?.currentIndex);
-        grid.map((data)=>{
-            if(data.currentQuestion == participantData?.round2?.currentIndex)
-            {
-              setCurrentData(data);
-            }
-            else if(grid.length == participantData?.round2?.currentIndex)
-            {
-              toast.success("Questions are out of stack, wait for some time.",{autoClose:false,onClose:()=>{navigate("/")}});
-            }
-            else
-            {
-              toast.success("Questions are out of stack, wait for some time.",{autoClose:false,onClose:()=>{navigate("/")}});
-            }
-        })
+  const checkGameOver = async (grid: CrossWordType[]) => {
+    const currentIndex = await getCurrentIndex(participantData?.lotNo);
+    console.log(currentIndex);
+  
+    // Case 1: If the current index is within the question grid
+    if (currentIndex < grid.length) {
+      setCurrentQuestionIndex(currentIndex); // Update the current question index
+      const currentQuestion = grid.find(data => data.currentQuestion === currentIndex);
+  
+      if (currentQuestion) {
+        console.log("Current Question:", currentQuestion);
+        setCurrentData(currentQuestion);
+      } else {
+        clearLocalStorage();
+        toast.info("No more questions available. Please wait.", {
+          autoClose: false,
+          onClose: () => navigate("/"),
+        });
       }
-      else if(grid.length == participantData?.round2?.currentIndex)
-      {
-        toast.success("Questions are out of stack, wait for some time.",{autoClose:false,onClose:()=>{navigate("/")}});
-      }
-      else
-      {
-        toast.success("Questions are out of stack, wait for some time.",{autoClose:false,onClose:()=>{navigate("/")}});
-      }
-  }
+  
+    // Case 2: If all questions are completed or index is out of range
+    } else if (currentIndex >= grid.length) {
+      clearLocalStorage();
+      toast.success("You have completed all available questions. Please wait for new puzzles.", {
+        autoClose: false,
+        onClose: () => navigate("/"),
+      });
+    } else {
+      clearLocalStorage();
+      toast.error("An error occurred. Please wait.", {
+        autoClose: false,
+        onClose: () => navigate("/"),
+      });
+    }
+  };
+  
 
   const checkAnswers = async () => {
     const newFeedback: Record<string, boolean | undefined> = {};
@@ -241,15 +245,25 @@ const CrossWord: React.FC = () => {
     setScore(newScore);
     if(newScore == 20)
     {
-      if(participantData?.round2?.currentIndex + 1 < allQuestionsData.length)
+      if(currentQuestionIndex + 1 < allQuestionsData.length)
       {
         await updateCurrentIndex(participantData.lotNo,2);
         checkGameOver(allQuestionsData);
-        if(currentQuestionIndex < allQuestionsData.length)
+        if(currentQuestionIndex < allQuestionsData.length){
           setCurrentQuestionIndex(currentQuestionIndex+1);
+          setCurrentData(allQuestionsData[currentQuestionIndex+1]);
+
+          setInputs(Array(400).fill(''));
+        setFeedback({});
+        setScore(0);
+        clearLocalStorage();  // Clear stored data for the next puzzle
+          
+        }
+        
       }
       else
       {
+        clearLocalStorage();
         toast.success("Congratulations! You have completed todays cross word.",{autoClose:false,onClose:()=>{navigate("/")}});
       }
       
