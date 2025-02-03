@@ -13,15 +13,28 @@ const calculateTotalTime = (round: { [key: string]: any }): number => {
 };
 
 // Function to calculate total score from an object containing score entries
-const calculateTotalScore = (round: { [key: string]: any }): number => {
+const calculateTotalScore = (round: { [key: string]: any }, checkIndex: number): number => {
   let totalScore = 0;
+  
   for (const key in round) {
     if (key.startsWith("score")) {
-      totalScore += round[key];
+      // Extract the numeric part from the key (e.g., from "score10", extract "10")
+      const matches = key.match(/\d+$/); // Regular expression to match one or more digits at the end of the key
+      if (matches) {
+        const tempIndex = parseInt(matches[0], 10); // Convert the matched index to an integer
+        
+        // Only add to totalScore if tempIndex is less than checkIndex
+        if (tempIndex < checkIndex) {
+          totalScore += round[key];
+        }
+      }
     }
   }
+
+  console.log(totalScore);
   return totalScore;
 };
+
 
 // Function to convert milliseconds to a readable time format (hh:mm:ss)
 // const formatTime = (milliseconds: number): string => {
@@ -60,8 +73,8 @@ const LeaderBoard = () => {
           .map((item: any) => {
             const round1TotalTime = calculateTotalTime(item.round1);
             const round2TotalTime = calculateTotalTime(item.round2);
-            const round1Score = calculateTotalScore(item.round1);
-            const round2Score = calculateTotalScore(item.round2);
+            const round1Score = calculateTotalScore(item.round1,10);
+            const round2Score = calculateTotalScore(item.round2,6);
             const totalScore = round1Score + round2Score;
             const wholeTotalTime = round1TotalTime + round2TotalTime;
 
@@ -84,8 +97,8 @@ const LeaderBoard = () => {
           .map((item: any) => {
             const round1TotalTime = calculateTotalTime(item.round1);
             const round2TotalTime = calculateTotalTime(item.round2);
-            const round1Score = calculateTotalScore(item.round1);
-            const round2Score = calculateTotalScore(item.round2);
+            const round1Score = calculateTotalScore(item.round1,10);
+            const round2Score = calculateTotalScore(item.round2,6);
             const totalScore = round1Score + round2Score;
             const wholeTotalTime = round1TotalTime + round2TotalTime;
 
@@ -149,13 +162,13 @@ const LeaderBoard = () => {
                 {formatTime(item.round1TotalTime)}
               </td> */}
               <td className="border border-gray-300 px-4 py-2">
-                {calculateTotalScore(item.round1)}
+                {calculateTotalScore(item.round1,10)}
               </td>
               {/* <td className="border border-gray-300 px-4 py-2">
                 {formatTime(item.round2TotalTime)}
               </td> */}
               <td className="border border-gray-300 px-4 py-2">
-                {calculateTotalScore(item.round2)}
+                {calculateTotalScore(item.round2,6)}
               </td>
               {/* <td className="border border-gray-300 px-4 py-2">
                 {formatTime(item.wholeTotalTime)}
