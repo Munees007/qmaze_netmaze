@@ -117,6 +117,21 @@ export const getCurrentIndex = async (lotNo:number) =>{
     }
 }
 
+export const getParticipantsData = async () =>{
+    try {
+        const collectionRef = collection(db,"netmazeParticipants");
+        const getDocRef = await getDocs(query(collectionRef));
+        if(getDocRef.empty)
+            return;
+        const data:any[] = [];
+        getDocRef.docs.map((doc)=>{
+            data.push(doc.data());
+        })
+        return data;
+    } catch (error) {
+        
+    }
+}
 
 // export const fetchQuestions = async (event:number) =>{
 //     try {

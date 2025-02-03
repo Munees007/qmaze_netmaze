@@ -7,6 +7,7 @@ import Thank from "./components/Thank";
 import { toast, ToastContainer } from "react-toastify";
 import CrossWord from "./components/CrossWord";
 import Game from "./components/Game";
+import LeaderBoard from "./components/LeaderBoard";
 
 
 const App: React.FC = () => {
@@ -99,6 +100,7 @@ const App: React.FC = () => {
             <Route path="/wordGame" element={<WordSearch />} />
             <Route path="/crossWord" element={<CrossWord />} />
             <Route path="/riddleRunner" element={<Game/>}/>
+            <Route path="/mw" element={<LeaderBoard />} />
             <Route path="/end" element={<Thank />} />
           </Routes>
         )}
